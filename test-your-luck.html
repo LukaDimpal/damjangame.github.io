@@ -64,42 +64,44 @@
     let gameOver = false;
 
     function rollLuck() {
-      if (gameOver) {
-        resetGame();
-        return;
-      }
-
-      if (!player) {
-        player = document.getElementById("playerName").value.trim();
-        if (!player) return alert("Please enter your name.");
-      }
-
-      const roll = Math.random() < 0.5 ? 0 : 1;
-      if (roll === 1) {
-        luck++;
-        document.getElementById("luckCount").textContent = luck;
-        const chance = 1 / Math.pow(2, luck);
-        document.getElementById("chanceDisplay").textContent =
-          `1 in ${Math.round(1 / chance)} (${(chance * 100).toFixed(5)}%)`;
-      } else {
-        gameOver = true;
-        const finalChance = 1 / Math.pow(2, luck + 1);
-        document.getElementById("chanceDisplay").textContent =
-          `1 in ${Math.round(1 / finalChance)} (${(finalChance * 100).toFixed(10)}%)`;
-
-        history.push(`${player} - Luck: ${luck}`);
-        updateHistory();
-
-        leaderboard.push({ name: player, score: luck });
-        leaderboard.sort((a, b) => b.score - a.score);
-        leaderboard = leaderboard.slice(0, 5);
-        updateLeaderboard();
-
-        document.getElementById("rollButton").textContent = "🔄 Play Again";
-        document.getElementById("playerName").value = "";
-        player = "";
-      }
+    if (gameOver) {
+      resetGame();
+      return;
     }
+  
+    if (!player) {
+      player = document.getElementById("playerName").value.trim();
+      if (!player) return alert("Please enter your name.");
+    }
+  
+    const roll = Math.random() < 0.5 ? 0 : 1;
+    if (roll === 1) {
+      luck++;
+      document.getElementById("luckCount").textContent = luck;
+      const chance = 1 / Math.pow(2, luck);
+      document.getElementById("chanceDisplay").textContent =
+        `1 in ${Math.round(1 / chance)} (${(chance * 100).toFixed(5)}%)`;
+    } else {
+      // End game immediately
+      gameOver = true;
+  
+      const finalChance = 1 / Math.pow(2, luck + 1);
+      document.getElementById("chanceDisplay").textContent =
+        `1 in ${Math.round(1 / finalChance)} (${(finalChance * 100).toFixed(10)}%)`;
+  
+      history.push(`${player} - Luck: ${luck}`);
+      updateHistory();
+  
+      leaderboard.push({ name: player, score: luck });
+      leaderboard.sort((a, b) => b.score - a.score);
+      leaderboard = leaderboard.slice(0, 5);
+      updateLeaderboard();
+  
+      document.getElementById("rollButton").textContent = "🔄 Play Again";
+      document.getElementById("playerName").value = "";
+      player = "";
+    }
+  }
 
     function resetGame() {
       luck = 0;
@@ -108,6 +110,7 @@
       document.getElementById("chanceDisplay").textContent = "--";
       document.getElementById("rollButton").textContent = "🎲 Roll";
     }
+
 
     function updateHistory() {
       const list = document.getElementById("historyList");
