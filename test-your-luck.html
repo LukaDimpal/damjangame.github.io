@@ -58,61 +58,72 @@
   </div>
 
   <script>
-    let luck = 0;
-    let player = "";
-    let history = [];
-    let leaderboard = [];
+  let luck = 0;
+  let player = "";
+  let history = [];
+  let leaderboard = [];
+  let gameOver = false;
 
-    function rollLuck() {
-      if (!player) {
-        player = document.getElementById("playerName").value.trim();
-        if (!player) return alert("Please enter your name.");
-      }
+  function rollLuck() {
+    if (gameOver) return;
 
-      const roll = Math.random() < 0.5 ? 0 : 1;
-      if (roll === 1) {
-        luck++;
-        document.getElementById("luckCount").textContent = luck;
-      } else {
-        const chance = 1 / Math.pow(2, luck + 1);
-        document.getElementById("chanceDisplay").textContent = `1 in ${Math.round(1/chance)} (${chance.toFixed(10)})`;
-        history.push(`${player} - Luck: ${luck}`);
-        updateHistory();
-
-        leaderboard.push({ name: player, score: luck });
-        leaderboard.sort((a, b) => b.score - a.score);
-        leaderboard = leaderboard.slice(0, 5);
-        updateLeaderboard();
-      }
+    if (!player) {
+      player = document.getElementById("playerName").value.trim();
+      if (!player) return alert("Please enter your name.");
     }
 
-    function resetGame() {
-      player = "";
-      luck = 0;
-      document.getElementById("playerName").value = "";
-      document.getElementById("luckCount").textContent = "0";
-      document.getElementById("chanceDisplay").textContent = "--";
-    }
+    const roll = Math.random() < 0.5 ? 0 : 1;
+    if (roll === 1) {
+      luck++;
+      document.getElementById("luckCount").textContent = luck;
+      const chance = 1 / Math.pow(2, luck + 1);
+      document.getElementById("chanceDisplay").textContent =
+        `1 in ${Math.round(1 / chance)} (${(chance * 100).toFixed(5)}%)`;
+    } else {
+      // End game
+      gameOver = true;
+      const finalChance = 1 / Math.pow(2, luck + 1);
+      document.getElementById("chanceDisplay").textContent =
+        `1 in ${Math.round(1 / finalChance)} (${(finalChance * 100).toFixed(10)}%)`;
 
-    function updateHistory() {
-      const list = document.getElementById("historyList");
-      list.innerHTML = "";
-      history.slice().reverse().forEach(entry => {
-        const li = document.createElement("li");
-        li.textContent = entry;
-        list.appendChild(li);
-      });
-    }
+      history.push(`${player} - Luck: ${luck}`);
+      updateHistory();
 
-    function updateLeaderboard() {
-      const list = document.getElementById("leaderboardList");
-      list.innerHTML = "";
-      leaderboard.forEach((entry, index) => {
-        const li = document.createElement("li");
-        li.textContent = `${index + 1}. ${entry.name} - Luck: ${entry.score}`;
-        list.appendChild(li);
-      });
+      leaderboard.push({ name: player, score: luck });
+      leaderboard.sort((a, b) => b.score - a.score);
+      leaderboard = leaderboard.slice(0, 5);
+      updateLeaderboard();
     }
-  </script>
+  }
+
+  function resetGame() {
+    player = "";
+    luck = 0;
+    gameOver = false;
+    document.getElementById("playerName").value = "";
+    document.getElementById("luckCount").textContent = "0";
+    document.getElementById("chanceDisplay").textContent = "--";
+  }
+
+  function updateHistory() {
+    const list = document.getElementById("historyList");
+    list.innerHTML = "";
+    history.slice().reverse().forEach(entry => {
+      const li = document.createElement("li");
+      li.textContent = entry;
+      list.appendChild(li);
+    });
+  }
+
+  function updateLeaderboard() {
+    const list = document.getElementById("leaderboardList");
+    list.innerHTML = "";
+    leaderboard.forEach((entry, index) => {
+      const li = document.createElement("li");
+      li.textContent = `${index + 1}. ${entry.name} - Luck: ${entry.score}`;
+      list.appendChild(li);
+    });
+  }
+</script>
 </body>
 </html>
