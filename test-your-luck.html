@@ -76,9 +76,11 @@
     if (roll === 1) {
       luck++;
       document.getElementById("luckCount").textContent = luck;
-      const chance = 1 / Math.pow(2, luck + 1);
+      // While streak is ongoing, show chance of current streak length
+      const chance = 1 / Math.pow(2, luck);
       document.getElementById("chanceDisplay").textContent =
-        `1 in ${Math.round(1 / chance)} (${(chance * 100).toFixed(5)}%)`;
+      `1 in ${Math.round(1 / chance)} (${(chance * 100).toFixed(5)}%)`;
+
     } else {
       // End game
       gameOver = true;
